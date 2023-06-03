@@ -456,12 +456,11 @@ class AgentSAC(AgentBase):
         return obj_critic, state
 
 
-class PendulumEnv(gym.Wrapper):  # a demo of custom gym env
+class BipedalWalkerEnv(gym.Wrapper):  # a demo of custom gym env
     def __init__(self, gym_env_name=None):
         gym.logger.set_level(40)  # Block warning
-        assert '0.18.0' <= gym.__version__ <= '0.25.2'  # pip3 install gym==0.24.0
         if gym_env_name is None:
-            gym_env_name = "Pendulum-v0" if gym.__version__ < '0.18.0' else "Pendulum-v1"
+            gym_env_name = "BipedalWalker-v2" if gym.__version__ < '0.18.0' else "BipedalWalker-v3"
         super().__init__(env=gym.make(gym_env_name))
 
         '''the necessary env information when you design a custom env'''
@@ -478,8 +477,7 @@ class PendulumEnv(gym.Wrapper):  # a demo of custom gym env
         # We suggest that adjust action space to (-1, +1) when designing a custom env.
         state, reward, done, info_dict = self.env.step(action * 2)
         state = state.reshape(self.state_dim)
-        return state, float(reward * 0.5), done, info_dict
-
+        return state, float(reward), done, info_dict
 
 def train_agent(args: Config):
     args.init_before_training()
@@ -649,8 +647,38 @@ def train_sac_td3_for_lunar_lander():
 
     """
 
+def train_sac_td3_for_bipedalwalker():
+    agent_class = [AgentSAC, AgentTD3][1]  # DRL algorithm name
+    env_class = gym.make
+    env_args = {
+        'env_name': 'BipedalWalker-v3',
+        'num_envs': 1,
+        'max_step': 1600,
+        'state_dim': 24,
+        'action_dim': 4,
+        'if_discrete': False,
+    }
+    get_gym_env_args(env=gym.make('BipedalWalker-v3'), if_print=True)  # return env_args
+
+    args = Config(agent_class, env_class, env_args)  # see `config.py Arguments()` for hyperparameter explanation
+    args.break_step = int(8e4)  # break training if 'total_step > break_step'
+    args.net_dims = (128, 128)  # the middle layer dimension of MultiLayer Perceptron
+    args.horizon_len = 128  # collect horizon_len step while exploring, then update network
+    args.repeat_times = 1.0  # repeatedly update network using ReplayBuffer to keep critic's loss small
+    args.state_value_tau = 0.1  # todo
+    args.state_value_tau = 0.01  # todo
+    # args.state_value_tau = 0.001  # todo
+    # args.state_value_tau = 0.000  # todo
+    # todo YonV1943 2022-10-31 15:34:34 something wrong with the state_std and value_std !!!!!!!!!!
+
+    args.gpu_id = GPU_ID
+    args.random_seed = GPU_ID
+    train_agent(args)
+    """   
+
+    """
 
 if __name__ == '__main__':
-    GPU_ID = int(sys.argv[1])  # todo
+    GPU_ID = int(sys.argv[1]if len(sys.argv) > 1 else -1)  # todo
     # train_sac_td3_for_pendulum()
-    train_sac_td3_for_lunar_lander()
+    train_sac_td3_for_bipedalwalker()

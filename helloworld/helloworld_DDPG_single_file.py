@@ -386,7 +386,23 @@ def get_rewards_and_steps(env, actor, if_render: bool = False) -> (float, int): 
 
 
 def train_ddpg_for_bipedal_walker(gpu_id=0):
-
+    """_summary_
+        | `step`: Number of samples, or total training steps, or running times of `env.step()`.
+        | `time`: Time spent from the start of training to this moment.
+        | `avgR`: Average value of cumulative rewards, which is the sum of rewards in an episode.
+        | `stdR`: Standard dev of cumulative rewards, which is the sum of rewards in an episode.
+        | `avgS`: Average of steps in an episode.
+        | `objC`: Objective of Critic network. Or call it loss function of critic network.
+        | `objA`: Objective of Actor network. It is the average Q value of the critic network.
+        |     step      time  |     avgR    stdR    avgS  |     objC      objA
+        | 2.05e+04        63  |  -151.46    0.69    1600  |     0.26      0.43
+        | 4.10e+04       135  |  -107.80   16.05     234  |     0.34      0.63
+        | 6.14e+04       239  |  -102.96   22.84    1187  |     0.36     -1.59
+        | 8.19e+04       376  |  -132.84    5.38    1600  |     0.41     -1.60
+    
+    Args:
+        gpu_id (int, optional): _description_. Defaults to 0.
+    """
     env_args = {
         'env_name': 'BipedalWalker-v3',
         'num_envs': 1,
@@ -402,6 +418,6 @@ def train_ddpg_for_bipedal_walker(gpu_id=0):
     args.gamma = 0.97  # discount factor of future rewards
 
     train_agent(args)
-
+    
 
 train_ddpg_for_bipedal_walker(gpu_id=int(sys.argv[1]) if len(sys.argv) > 1 else -1)
