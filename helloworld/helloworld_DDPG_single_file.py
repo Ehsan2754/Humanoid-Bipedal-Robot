@@ -394,6 +394,7 @@ def train_ddpg_for_bipedal_walker(gpu_id=0):
         | `avgS`: Average of steps in an episode.
         | `objC`: Objective of Critic network. Or call it loss function of critic network.
         | `objA`: Objective of Actor network. It is the average Q value of the critic network.
+        | DDPG |
         |     step      time  |     avgR    stdR    avgS  |     objC      objA
         | 2.05e+04        63  |  -151.46    0.69    1600  |     0.26      0.43
         | 4.10e+04       135  |  -107.80   16.05     234  |     0.34      0.63

@@ -1,3 +1,36 @@
+# ‌Humanoid-Bipedal-Robot
+*Powered by ElegantRL* 
+## Metrics
+
+
+| Metric | Description                                                                     |
+| :----- | :------------------------------------------------------------------------------ |
+| `step` | Number of samples, or total training steps, or running times of `env.step()`.   |
+| `time` | Time spent from the start of training to this moment.                           |
+| `avgR` | Average value of cumulative rewards, which is the sum of rewards in an episode. |
+| `stdR` | Standard dev of cumulative rewards, which is the sum of rewards in an episode.  |
+| `avgS` | Average of steps in an episode.                                                 |
+| `objC` | Objective of Critic network. Or call it loss function of critic network.        |
+| `objA` | Objective of Actor network. It is the average Q value of the critic network.    |
+
+## Methods Comparision
+
+### DDPG
+
+| step     | time | avgR    | stdR  | avgS | objC | objA  |
+| -------- | ---- | ------- | ----- | ---- | ---- | ----- |
+| 2.05e+04 | 63   | -151.46 | 0.69  | 1600 | 0.26 | 0.43  |
+| 4.10e+04 | 135  | -107.80 | 16.05 | 234  | 0.34 | 0.63  |
+| 6.14e+04 | 239  | -102.96 | 22.84 | 1187 | 0.36 | -1.59 |
+| 8.19e+04 | 376  | -132.84 | 5.38  | 1600 | 0.41 | -1.60 |
+
+### SAC-TD3
+
+
+
+--------------------------------------------------------------------------------
+TODO : Fix readme and the codebase
+--------------------------------------------------------------------------------
 ## ElegantRL “小雅”: Massively Parallel Library for Cloud-native Deep Reinforcement Learning
 
 [![Downloads](https://pepy.tech/badge/elegantrl)](https://pepy.tech/project/elegantrl)
