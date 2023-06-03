@@ -273,11 +273,11 @@ class ReplayBuffer:  # for off-policy
         return self.states[ids], self.actions[ids], self.rewards[ids], self.undones[ids], self.states[ids + 1]
 
 
-class PendulumEnv(gym.Wrapper):  # a demo of custom gym env
+class BipedalWalkerEnv(gym.Wrapper):  # a demo of custom gym env
     def __init__(self, gym_env_name=None):
         gym.logger.set_level(40)  # Block warning
         if gym_env_name is None:
-            gym_env_name = "Pendulum-v0" if gym.__version__ < '0.18.0' else "Pendulum-v1"
+            gym_env_name = "BipedalWalker-v2" if gym.__version__ < '0.18.0' else "BipedalWalker-v3"
         super().__init__(env=gym.make(gym_env_name))
 
         '''the necessary env information when you design a custom env'''
@@ -385,15 +385,17 @@ def get_rewards_and_steps(env, actor, if_render: bool = False) -> (float, int): 
     return cumulative_returns, episode_steps + 1
 
 
-def train_ddpg_for_pendulum(gpu_id=0):
-    env_args = {
-        'env_name': 'Pendulum',  # Apply torque on the free end to swing a pendulum into an upright position
-        'state_dim': 3,  # the x-y coordinates of the pendulum's free end and its angular velocity.
-        'action_dim': 1,  # the torque applied to free end of the pendulum
-        'if_discrete': False  # continuous action space, symbols → direction, value → force
-    }  # env_args = get_gym_env_args(env=gym.make('CartPole-v0'), if_print=True)
+def train_ddpg_for_bipedal_walker(gpu_id=0):
 
-    args = Config(agent_class=AgentDDPG, env_class=PendulumEnv, env_args=env_args)  # see `Config` for explanation
+    env_args = {
+        'env_name': 'BipedalWalker-v3',
+        'num_envs': 1,
+        'max_step': 1600,
+        'state_dim': 24,
+        'action_dim': 4,
+        'if_discrete': False,
+    }
+    args = Config(agent_class=AgentDDPG, env_class=BipedalWalkerEnv, env_args=env_args)  # see `Config` for explanation
     args.break_step = int(1e5)  # break training if 'total_step > break_step'
     args.net_dims = (64, 32)  # the middle layer dimension of MultiLayer Perceptron
     args.gpu_id = gpu_id  # the ID of single GPU, -1 means CPU
@@ -402,4 +404,4 @@ def train_ddpg_for_pendulum(gpu_id=0):
     train_agent(args)
 
 
-train_ddpg_for_pendulum(gpu_id=int(sys.argv[1]) if len(sys.argv) > 1 else -1)
+train_ddpg_for_bipedal_walker(gpu_id=int(sys.argv[1]) if len(sys.argv) > 1 else -1)
